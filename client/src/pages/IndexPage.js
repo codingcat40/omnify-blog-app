@@ -7,7 +7,7 @@ export default function IndexPage() {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/post?page=${page}&limit=5`)
+    fetch(`https://omnify-blog-app-n6gd.onrender.com/post?page=${page}&limit=5`)
       .then(response => response.json())
       .then(data => {
         setPosts(data.posts);

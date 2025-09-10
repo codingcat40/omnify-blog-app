@@ -11,14 +11,38 @@ const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const fs = require('fs');
 
-const app = express();
-const uploadMiddleware = multer({ dest: 'uploads/' });
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
 
 // Environment variables
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGODB_URI;
 const JWT_SECRET = process.env.JWT_SECRET;
 const SALT = bcrypt.genSaltSync(10);
+
+
+//cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'mern-blog',
+    allowed_formats: ['jpg', 'png', 'jpeg'],
+  },
+});
+
+
+
+const app = express();
+const uploadMiddleware = multer({storage});
+
+
 
 // Middleware
 app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
