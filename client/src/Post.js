@@ -7,7 +7,7 @@ export default function Post({_id,title,summary,cover,content,createdAt,author})
     <div className="post">
       <div className="image">
         <Link to={`/post/${_id}`}>
-          <img src={'https://omnify-blog-app-n6gd.onrender.com/'+cover} alt=""/>
+          <img src={cover} alt={title} />
         </Link>
       </div>
       <div className="texts">
@@ -15,7 +15,7 @@ export default function Post({_id,title,summary,cover,content,createdAt,author})
         <h2>{title}</h2>
         </Link>
         <p className="info">
-          <p className="author">{author.username}</p>
+          <a className="author">{author.username}</a>
           <time>{formatISO9075(new Date(createdAt))}</time>
         </p>
         <p className="summary">{summary}</p>
