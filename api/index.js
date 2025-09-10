@@ -146,22 +146,28 @@ app.post(
   requireAuth,
   uploadMiddleware.single("file"),
   async (req, res) => {
-    const { originalname, path } = req.file;
-    const ext = originalname.split(".").pop();
-    const newPath = path + "." + ext;
-    fs.renameSync(path, newPath);
+    try {
+      const { title, summary, content } = req.body;
 
-    const { title, summary, content } = req.body;
-    const postDoc = await Post.create({
-      title,
-      summary,
-      content,
-      cover: newPath,
-      author: req.user.id,
-    });
-    res.json(postDoc);
+      // Cloudinary will already give you a URL for the file
+      const coverUrl = req.file ? req.file.path : null;
+
+      const postDoc = await Post.create({
+        title,
+        summary,
+        content,
+        cover: coverUrl,
+        author: req.user.id,
+      });
+
+      res.json(postDoc);
+    } catch (err) {
+      console.error("❌ Error creating post:", err);
+      res.status(500).json({ error: "Failed to create post" });
+    }
   }
 );
+
 
 // Update Post (protected)
 app.put(
