@@ -19,7 +19,7 @@ Users can register, log in, create posts, edit posts, and delete posts. Posts ar
 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/mern-blog.git
+https://github.com/codingcat40/omnify-blog-app.git
 cd mern-blog
 ```
 
@@ -39,6 +39,6 @@ and
 npm run start
 ```
 
-6. open the project url and signup, login and create new posts and view each other users post
+6. open the project url and signup, login and create new posts and view other users post
 
 
