@@ -39,7 +39,24 @@ const app = express();
 const uploadMiddleware = multer({ storage });
 
 // Middleware
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://your-frontend-domain.onrender.com", // replace with actual frontend domain once deployed
+];
+
+app.use(
+  cors({
+    credentials: true,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  })
+);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static(__dirname + "/uploads"));
