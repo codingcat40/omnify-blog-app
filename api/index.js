@@ -36,7 +36,6 @@ const storage = new CloudinaryStorage({
 });
 
 const app = express();
-const uploadMiddleware = multer({ storage });
 
 // Middleware
 const allowedOrigins = [
@@ -72,7 +71,7 @@ mongoose
     process.exit(1);
   });
 
-// -------------------- HELPER -------------------- //
+// JSON WEB TOKEN //
 function requireAuth(req, res, next) {
   const { token } = req.cookies;
   if (!token) return res.status(401).json("Unauthorized");
@@ -83,7 +82,7 @@ function requireAuth(req, res, next) {
   });
 }
 
-// -------------------- ROUTES -------------------- //
+// ROUTES //
 
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
@@ -137,28 +136,6 @@ app.post("/logout", (req, res) => {
 app.post(
   "/post",
   requireAuth,
-  uploadMiddleware.single("file"),
-  async (req, res) => {
-    try {
-      const { title, summary, content } = req.body;
-
-      // Cloudinary will already give you a URL for the file
-      const coverUrl = req.file ? req.file.path : null;
-
-      const postDoc = await Post.create({
-        title,
-        summary,
-        content,
-        cover: coverUrl,
-        author: req.user.id,
-      });
-
-      res.json(postDoc);
-    } catch (err) {
-      console.error("❌ Error creating post:", err);
-      res.status(500).json({ error: "Failed to create post" });
-    }
-  }
 );
 
 
@@ -166,33 +143,6 @@ app.post(
 app.put(
   "/post",
   requireAuth,
-  uploadMiddleware.single("file"),
-  async (req, res) => {
-    let newPath = null;
-    if (req.file) {
-      const { originalname, path } = req.file;
-      const ext = originalname.split(".").pop();
-      newPath = path + "." + ext;
-      fs.renameSync(path, newPath);
-    }
-
-    const { id, title, summary, content } = req.body;
-    const postDoc = await Post.findById(id);
-
-    if (!postDoc) return res.status(404).json("Post not found");
-    if (String(postDoc.author) !== String(req.user.id)) {
-      return res.status(403).json("You are not the author");
-    }
-
-    await postDoc.updateOne({
-      title,
-      summary,
-      content,
-      cover: newPath ? newPath : postDoc.cover,
-    });
-
-    res.json(postDoc);
-  }
 );
 
 // Get Posts (public with pagination)
