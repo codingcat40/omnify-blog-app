@@ -41,7 +41,7 @@ const uploadMiddleware = multer({ storage });
 // Middleware
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://omnify-blog.netlify.app", // replace with actual frontend domain once deployed
+  "https://personal-blog2025.netlify.app/", // replace with actual frontend domain once deployed
 ];
 
 app.use(
