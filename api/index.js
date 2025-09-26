@@ -41,19 +41,13 @@ const uploadMiddleware = multer({ storage });
 // Middleware
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://personal-blog2025.netlify.app/", // replace with actual frontend domain once deployed
+  "https://personal-blog2025.netlify.app", // replace with actual frontend domain once deployed
 ];
 
 app.use(
   cors({
     credentials: true,
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: allowedOrigins
   })
 );
 
