@@ -36,6 +36,7 @@ const storage = new CloudinaryStorage({
 });
 
 const app = express();
+const uploadMiddleware = multer({ storage });
 
 // Middleware
 const allowedOrigins = [
@@ -65,13 +66,13 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("MongoDB Connected"))
+  .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => {
-    console.error("MongoDB Connection Error:", err);
+    console.error("❌ MongoDB Connection Error:", err);
     process.exit(1);
   });
 
-// -------------------- JWT -------------------- //
+// -------------------- HELPER -------------------- //
 function requireAuth(req, res, next) {
   const { token } = req.cookies;
   if (!token) return res.status(401).json("Unauthorized");
@@ -136,6 +137,7 @@ app.post("/logout", (req, res) => {
 app.post(
   "/post",
   requireAuth,
+  uploadMiddleware.single("file"),
   async (req, res) => {
     try {
       const { title, summary, content } = req.body;
@@ -164,6 +166,7 @@ app.post(
 app.put(
   "/post",
   requireAuth,
+  uploadMiddleware.single("file"),
   async (req, res) => {
     let newPath = null;
     if (req.file) {
